@@ -55,9 +55,8 @@ class SimpleDrivingEnv(gym.Env):
             throttle = fwd[action]
             steering_angle = steerings[action]
             action = [throttle, steering_angle]  # Pack into a list
-        else:
-            # For continuous action space (if you decide to use it)
-            pass
+
+        print(f"Action before applying: {action}")  # Debugging line
         
         self.car.apply_action(action)
         
@@ -86,6 +85,7 @@ class SimpleDrivingEnv(gym.Env):
 
         ob = car_ob
         return ob, reward, self.done, dict()
+
 
 
     def seed(self, seed=None):

@@ -50,8 +50,8 @@ class SimpleDrivingEnv(gym.Env):
     def step(self, action):
         # If using discrete actions, map the action to throttle and steering_angle
         if self._isDiscrete:
-            fwd = [-1, -1, -1, 0, 0, 0, 1, 1, 1]
-            steerings = [-0.6, 0, 0.6, -0.6, 0, 0.6, -0.6, 0, 0.6]
+            fwd = [-0.5, -0.5, -0.5, 0, 0, 0, 0.5, 0.5, 0.5]
+            steerings = [-0.3, 0, 0.3, -0.3, 0, 0.3, -0.3, 0, 0.3]
             throttle = fwd[action]
             steering_angle = steerings[action]
             action = [throttle, steering_angle]  # Pack into a list
@@ -82,6 +82,9 @@ class SimpleDrivingEnv(gym.Env):
         if dist_to_goal < 1.5 and not self.reached_goal:
             self.done = True
             self.reached_goal = True
+
+        
+        print(f"Dist: {dist_to_goal}")  # Debugging line
 
         ob = car_ob
         return ob, reward, self.done, dict()

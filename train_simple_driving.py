@@ -4,7 +4,7 @@ from simple_driving.agents.dqn_agent import DQNAgent
 
 def train():
     # Initialize environment and agent
-    env = SimpleDrivingEnv(isDiscrete=False, renders=False)
+    env = SimpleDrivingEnv(isDiscrete=True, renders=True)
     agent = DQNAgent(input_dim=2, output_dim=3)  # 2 for goal position, 3 for actions
 
     num_episodes = 1000

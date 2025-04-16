@@ -56,7 +56,7 @@ class SimpleDrivingEnv(gym.Env):
             steering_angle = steerings[action]
             action = [throttle, steering_angle]  # Pack into a list
 
-        print(f"Action before applying: {action}")  # Debugging line
+        # print(f"Action before applying: {action}")  # Debugging line
         
         self.car.apply_action(action)
         
@@ -84,7 +84,7 @@ class SimpleDrivingEnv(gym.Env):
             self.reached_goal = True
 
         
-        print(f"Dist: {dist_to_goal}")  # Debugging line
+        # print(f"Dist: {dist_to_goal}")  # Debugging line
 
         ob = car_ob
         return ob, reward, self.done, dict()

@@ -51,6 +51,12 @@ class DQNAgent:
         # Sample a random batch from memory
         batch = np.random.choice(self.memory, self.batch_size, replace=False)
         return zip(*batch)
+        # File "/home/charlize-2/git/AI-in-Robotics/simple_driving/agents/dqn_agent.py", line 52, in sample_batch
+        # batch = np.random.choice(self.memory, self.batch_size, replace=False)
+        # File "numpy/random/mtrand.pyx", line 960, in numpy.random.mtrand.RandomState.choice
+        # ValueError: setting an array element with a sequence. The requested array has an inhomogeneous 
+        # shape after 2 dimensions. The detected shape was (64, 5) + inhomogeneous part.
+
 
     def train(self):
         # Only train if enough samples in memory
@@ -78,10 +84,14 @@ class DQNAgent:
         # Compute loss (mean squared error)
         loss = nn.MSELoss()(q_values, target_q_values)
 
+        print(f"MSE Loss: {loss}") # Debugging
+
         # Optimize the Q-network
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
+
+        print(f"Optimization") # Debugging
 
         # Update epsilon (for exploration-exploitation balance)
         if self.epsilon > self.epsilon_min:

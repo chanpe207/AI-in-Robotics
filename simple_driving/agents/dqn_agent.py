@@ -20,7 +20,7 @@ class QNetwork(nn.Module):
 
 
 class DQNAgent:
-    def __init__(self, input_dim, output_dim, learning_rate=1e-3, gamma=0.99, batch_size=64, epsilon=1.0, epsilon_decay=0.995, epsilon_min=0.1):
+    def __init__(self, input_dim, output_dim, learning_rate=1e-4, gamma=0.99, batch_size=64, epsilon=0.8, epsilon_decay=0.98, epsilon_min=0.1):
         self.input_dim = input_dim
         self.output_dim = output_dim
         self.gamma = gamma
@@ -37,16 +37,16 @@ class DQNAgent:
         self.optimizer = optim.Adam(self.q_network.parameters(), lr=learning_rate)
         self.memory = []  # Experience replay buffer
 
-        self.prior_probs = np.array([0.05, 0.05, 0.05, 
-                        0.1, 0.1, 0.1,
-                        0.18, 0.18, 0.24]) # Makes epsilon-greedy more likely to choose forward action
-        self.prior_probs /= self.prior_probs.sum()  # Normalize, just in case
+        # self.prior_probs = np.array([0.05, 0.05, 0.05, 
+        #                 0.1, 0.1, 0.1,
+        #                 0.18, 0.18, 0.24]) # Makes epsilon-greedy more likely to choose forward action
+        # self.prior_probs /= self.prior_probs.sum()  # Normalize, just in case
 
     def select_action(self, state):
         # Epsilon-greedy action selection
         if np.random.rand() <= self.epsilon:
-            return np.random.choice(self.output_dim, p=self.prior_probs) # Biased random action based on prior probabilities
-            # return np.random.choice(self.output_dim)  # Random action
+            # return np.random.choice(self.output_dim, p=self.prior_probs) # Biased random action based on prior probabilities
+            return np.random.choice(self.output_dim)  # Random action
         state = torch.tensor(state, dtype=torch.float32).unsqueeze(0)
         q_values = self.q_network(state)
         return torch.argmax(q_values).item()  # Choose action with highest Q-value

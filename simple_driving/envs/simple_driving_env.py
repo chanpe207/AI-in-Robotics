@@ -77,11 +77,17 @@ class SimpleDrivingEnv(gym.Env):
         dist_to_goal = math.sqrt(((carpos[0] - goalpos[0]) ** 2 +
                                 (carpos[1] - goalpos[1]) ** 2))
         reward = -dist_to_goal
+
+        # Bonus if distance improves
+        if self.prev_dist_to_goal is not None:
+            reward += (self.prev_dist_to_goal - dist_to_goal) * 2.0
+
         self.prev_dist_to_goal = dist_to_goal
 
         if dist_to_goal < 1.5 and not self.reached_goal:
             self.done = True
             self.reached_goal = True
+            reward = 400 # Bonus if goal is reached
 
         
         # print(f"Dist: {dist_to_goal}")  # Debugging line

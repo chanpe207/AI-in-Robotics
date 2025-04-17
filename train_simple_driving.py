@@ -8,7 +8,16 @@ def train():
     # Initialize environment and agent
     env = SimpleDrivingEnv(isDiscrete=True, renders=True)
     agent = DQNAgent(input_dim=2, output_dim=9)  # 2 for goal position, 9 for actions
+
+    # Before loading
+    print("Before loading:", agent.q_network.fc1.weight[0][:5])
+
+    # Load weights
     load_model(agent.q_network, "simple_driving/agents/weights/best_model_load.pth")
+
+    # After loading
+    print("After loading:", agent.q_network.fc1.weight[0][:5])
+
     first_run = True
     best_reward = 0
 

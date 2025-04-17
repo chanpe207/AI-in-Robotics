@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import numpy as np
+import random
+
 
 class QNetwork(nn.Module):
     def __init__(self, input_dim, output_dim):
@@ -35,10 +37,16 @@ class DQNAgent:
         self.optimizer = optim.Adam(self.q_network.parameters(), lr=learning_rate)
         self.memory = []  # Experience replay buffer
 
+        self.prior_probs = np.array([0.05, 0.05, 0.05, 
+                        0.1, 0.1, 0.1,
+                        0.18, 0.18, 0.24]) # Makes epsilon-greedy more likely to choose forward action
+        self.prior_probs /= self.prior_probs.sum()  # Normalize, just in case
+
     def select_action(self, state):
         # Epsilon-greedy action selection
         if np.random.rand() <= self.epsilon:
-            return np.random.choice(self.output_dim)  # Random action
+            return np.random.choice(self.output_dim, p=self.prior_probs) # Biased random action based on prior probabilities
+            # return np.random.choice(self.output_dim)  # Random action
         state = torch.tensor(state, dtype=torch.float32).unsqueeze(0)
         q_values = self.q_network(state)
         return torch.argmax(q_values).item()  # Choose action with highest Q-value
@@ -49,18 +57,15 @@ class DQNAgent:
 
     def sample_batch(self):
         # Sample a random batch from memory
-        batch = np.random.choice(self.memory, self.batch_size, replace=False)
-        return zip(*batch)
-        # File "/home/charlize-2/git/AI-in-Robotics/simple_driving/agents/dqn_agent.py", line 52, in sample_batch
         # batch = np.random.choice(self.memory, self.batch_size, replace=False)
-        # File "numpy/random/mtrand.pyx", line 960, in numpy.random.mtrand.RandomState.choice
-        # ValueError: setting an array element with a sequence. The requested array has an inhomogeneous 
-        # shape after 2 dimensions. The detected shape was (64, 5) + inhomogeneous part.
+        batch = random.sample(self.memory, self.batch_size)
+        return zip(*batch)
 
 
     def train(self):
         # Only train if enough samples in memory
         if len(self.memory) < self.batch_size:
+            print(f"Batching") # Debugging
             return
 
         # Sample a batch from the experience replay buffer
@@ -90,8 +95,6 @@ class DQNAgent:
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
-
-        print(f"Optimization") # Debugging
 
         # Update epsilon (for exploration-exploitation balance)
         if self.epsilon > self.epsilon_min:

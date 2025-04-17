@@ -34,7 +34,7 @@ class SimpleDrivingEnv(gym.Env):
 
         self.reached_goal = False
         self._timeStep = 0.01
-        self._actionRepeat = 50
+        self._actionRepeat = 10
         self._renders = renders
         self._isDiscrete = isDiscrete
         self.car = None
@@ -50,13 +50,13 @@ class SimpleDrivingEnv(gym.Env):
     def step(self, action):
         # If using discrete actions, map the action to throttle and steering_angle
         if self._isDiscrete:
-            fwd = [-0.5, -0.5, -0.5, 0, 0, 0, 0.5, 0.5, 0.5]
+            fwd = [-0.8, -0.8, -0.8, 0, 0, 0, 0.8, 0.8, 0.8]
             steerings = [-0.3, 0, 0.3, -0.3, 0, 0.3, -0.3, 0, 0.3]
             throttle = fwd[action]
             steering_angle = steerings[action]
             action = [throttle, steering_angle]  # Pack into a list
 
-        # print(f"Action before applying: {action}")  # Debugging line
+        print(f"Action before applying: {action}")  # Debugging line
         
         self.car.apply_action(action)
         

@@ -20,7 +20,7 @@ class QNetwork(nn.Module):
 
 
 class DQNAgent:
-    def __init__(self, input_dim, output_dim, learning_rate=1e-3, gamma=0.99, batch_size=64, epsilon=0.95, epsilon_decay=0.99, epsilon_min=0.1):
+    def __init__(self, input_dim, output_dim, learning_rate=1e-4, gamma=0.99, batch_size=64, epsilon=0.95, epsilon_decay=0.99, epsilon_min=0.05):
         self.input_dim = input_dim
         self.output_dim = output_dim
         self.gamma = gamma

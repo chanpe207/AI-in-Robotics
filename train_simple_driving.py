@@ -54,7 +54,7 @@ def train():
     print("Before loading:", agent.q_network.fc1.weight[0][:5])
 
     # Load weights
-    load_model(agent.q_network, "simple_driving/agents/weights/best_model_load.pth")
+    load_model(agent.q_network, "simple_driving/agents/weights/load_model.pth")
 
     # After loading
     print("After loading:", agent.q_network.fc1.weight[0][:5])

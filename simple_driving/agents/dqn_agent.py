@@ -20,7 +20,7 @@ class QNetwork(nn.Module):
 
 
 class DQNAgent:
-    def __init__(self, input_dim, output_dim, learning_rate=1e-4, gamma=0.99, batch_size=64, epsilon=0.8, epsilon_decay=0.98, epsilon_min=0.1):
+    def __init__(self, input_dim, output_dim, learning_rate=1e-3, gamma=0.99, batch_size=64, epsilon=0.95, epsilon_decay=0.99, epsilon_min=0.1):
         self.input_dim = input_dim
         self.output_dim = output_dim
         self.gamma = gamma
@@ -37,10 +37,18 @@ class DQNAgent:
         self.optimizer = optim.Adam(self.q_network.parameters(), lr=learning_rate)
         self.memory = []  # Experience replay buffer
 
-        # self.prior_probs = np.array([0.05, 0.05, 0.05, 
-        #                 0.1, 0.1, 0.1,
-        #                 0.18, 0.18, 0.24]) # Makes epsilon-greedy more likely to choose forward action
-        # self.prior_probs /= self.prior_probs.sum()  # Normalize, just in case
+        self.prior_probs = np.array([
+            0.10,  # Reverse + Left
+            0.10,  # Reverse + Straight
+            0.10,  # Reverse + Right
+            0.05,  # No move + Left
+            0.05,  # No move + Straight
+            0.05,  # No move + Right
+            0.20,  # Forward + Left
+            0.20,  # Forward + Straight
+            0.20,  # Forward + Right
+            ]) # Makes epsilon-greedy more likely to choose forward/backward action
+        self.prior_probs /= self.prior_probs.sum()  # Normalize, just in case
 
     def select_action(self, state):
         # Epsilon-greedy action selection
@@ -65,7 +73,7 @@ class DQNAgent:
     def train(self):
         # Only train if enough samples in memory
         if len(self.memory) < self.batch_size:
-            print(f"Batching") # Debugging
+            # print(f"Batching") # Debugging
             return
 
         # Sample a batch from the experience replay buffer
@@ -89,16 +97,20 @@ class DQNAgent:
         # Compute loss (mean squared error)
         loss = nn.MSELoss()(q_values, target_q_values)
 
-        print(f"MSE Loss: {loss}") # Debugging
+        # print(f"MSE Loss: {loss}") # Debugging
 
         # Optimize the Q-network
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
 
-        # Update epsilon (for exploration-exploitation balance)
-        if self.epsilon > self.epsilon_min:
-            self.epsilon *= self.epsilon_decay
+        # # Update epsilon (for exploration-exploitation balance)
+        # if self.epsilon > self.epsilon_min:
+        #     self.epsilon *= self.epsilon_decay
+
+        # At the end of agent.train()
+        self.last_loss = loss.item()
+
 
     def update_target_network(self):
         # Periodically update the target network with the Q-network weights

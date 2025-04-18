@@ -56,7 +56,7 @@ class SimpleDrivingEnv(gym.Env):
             steering_angle = steerings[action]
             action = [throttle, steering_angle]  # Pack into a list
 
-        print(f"Action before applying: {action}")  # Debugging line
+        # print(f"Action before applying: {action}")  # Debugging line
         
         self.car.apply_action(action)
         
@@ -80,14 +80,14 @@ class SimpleDrivingEnv(gym.Env):
 
         # Bonus if distance improves
         if self.prev_dist_to_goal is not None:
-            reward += (self.prev_dist_to_goal - dist_to_goal) * 2.0
+            reward += (self.prev_dist_to_goal - dist_to_goal) * 1.5
 
         self.prev_dist_to_goal = dist_to_goal
 
         if dist_to_goal < 1.5 and not self.reached_goal:
             self.done = True
             self.reached_goal = True
-            reward = 400 # Bonus if goal is reached
+            reward = 100 # Bonus if goal is reached
 
         
         # print(f"Dist: {dist_to_goal}")  # Debugging line
